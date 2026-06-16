@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class CategoriaEnfermedad extends Model
+{
+    protected $fillable = [
+        "nombre"
+    ];
+}
