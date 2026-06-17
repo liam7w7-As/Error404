@@ -54,9 +54,40 @@ const cargarSegmentacions = () => {
         });
 };
 
+const timer = ref(null);
+const currentDateTime = ref('');
+const greeting = ref('');
+
+const updateDateTime = () => {
+    const now = new Date();
+    const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateString = now.toLocaleDateString('es-ES', optionsDate);
+    const timeString = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    
+    currentDateTime.value = `${dateString.charAt(0).toUpperCase() + dateString.slice(1)} - ${timeString}`;
+
+    const hour = now.getHours();
+    if (hour < 12) {
+        greeting.value = 'Buenos días';
+    } else if (hour < 19) {
+        greeting.value = 'Buenas tardes';
+    } else {
+        greeting.value = 'Buenas noches';
+    }
+};
+
 onMounted(() => {
     cargarSegmentacions();
+    updateDateTime();
+    timer.value = setInterval(updateDateTime, 1000);
     appStore.stopLoading();
+});
+
+import { onUnmounted } from "vue";
+onUnmounted(() => {
+    if (timer.value) {
+        clearInterval(timer.value);
+    }
 });
 </script>
 <template>
@@ -77,6 +108,23 @@ onMounted(() => {
             </div>
             <!-- /.row -->
         </template>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="alert border-0 shadow-sm d-flex align-items-center mb-0" style="background-color: #f8f9fa; color: #333; border-left: 5px solid #0dcaf0 !important;">
+                    <div class="me-3 text-info">
+                        <i class="fa fa-clock fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1 fw-bold">{{ greeting }}, {{ user.full_name || user.name }}</h5>
+                        <p class="mb-0 text-muted" style="font-size: 0.95rem;">
+                            Hoy es <strong>{{ currentDateTime }}</strong>. <br>
+                            Los siguientes indicadores muestran exclusivamente el resumen del <strong>día de hoy</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-lg-3 col-6" v-for="item in array_infos">

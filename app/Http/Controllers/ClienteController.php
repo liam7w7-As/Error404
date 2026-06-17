@@ -236,13 +236,13 @@ class ClienteController extends Controller
 
         if ($user->tipo != 'VENDEDOR') {
             $query_pendientes = clone $clientes_query;
-            $query_pendientes->whereHas("peddidos", function($q) use ($fecha, $user) {
+            $query_pendientes->whereHas("pedidos", function($q) use ($fecha, $user) {
                 $q->whereDate("created_at", $fecha)->where("estado", "PENDIENTE")->where("status", 1);
             });
             $pendientes = $query_pendientes->get();
 
             $query_despachados = clone $clientes_query;
-            $query_despachados->whereHas("peddidos", function($q) use ($fecha, $user) {
+            $query_despachados->whereHas("pedidos", function($q) use ($fecha, $user) {
                 $q->whereDate("created_at", $fecha)->where("estado", "DESPACHADO")->where("status", 1);
                 if ($user->tipo == 'DISTRIBUIDOR') {
                     $q->where("user_distribucion_id", $user->id);
@@ -251,7 +251,7 @@ class ClienteController extends Controller
             $despachados = $query_despachados->get();
 
             $query_entregados = clone $clientes_query;
-            $query_entregados->whereHas("peddidos", function($q) use ($fecha, $user) {
+            $query_entregados->whereHas("pedidos", function($q) use ($fecha, $user) {
                 $q->whereDate("created_at", $fecha)->where("estado", "ENTREGADO")->where("status", 1);
                 if ($user->tipo == 'DISTRIBUIDOR') {
                     $q->where("user_distribucion_id", $user->id);
