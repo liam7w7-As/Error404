@@ -45,6 +45,11 @@ class DistribucionController extends Controller
         ];
         $columnsFilter = [];
         $columnsBetweenFilter = [];
+        $fecha_ini = $request->input("fecha_ini");
+        $fecha_fin = $request->input("fecha_fin");
+        if ($fecha_ini && $fecha_fin) {
+            $columnsBetweenFilter["fecha"] = [$fecha_ini, $fecha_fin];
+        }
         $arrayOrderBy = [];
         if ($orderBy && $orderAsc) {
             $arrayOrderBy = [
