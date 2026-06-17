@@ -209,7 +209,7 @@ onUnmounted(() => {});
                     ></ItemMenu>
                     
                     <!-- PEDIDOS SUBMENU -->
-                    <li class="nav-item" :class="{'menu-open': openMenus.pedidos}" v-if="permisos == '*' || permisos.includes('pedidos.index') || permisos.includes('distribucions.create') || permisos.includes('despachos.index')">
+                    <li class="nav-item" :class="{'menu-open': openMenus.pedidos}" v-if="permisos == '*' || permisos.includes('pedidos.index') || permisos.includes('distribucions.index') || permisos.includes('despachos.index')">
                         <a class="nav-link" style="cursor: pointer;" :class="{'active': openMenus.pedidos}" @click="toggleSubMenu('pedidos')">
                             <i class="nav-icon fa fa-clipboard-check"></i>
                             <p>
@@ -230,10 +230,10 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('distribucions.create')
+                                    permisos.includes('distribucions.index')
                                 "
                                 :label="'Pedidos por Entregar'"
-                                :ruta="'distribucions.create'"
+                                :ruta="'distribucions.index'"
                                 :icon="'fa fa-truck'"
                             ></ItemMenu>
                             <ItemMenu

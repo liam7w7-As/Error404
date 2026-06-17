@@ -133,7 +133,7 @@ class PedidoService
     {
         $pedidos = Pedido::select("pedidos.*")
             ->with([
-                "cliente:id,nombre,razon_social",
+                "cliente:id,nombre,razon_social,fono,tipo_negocio_id",
                 "cliente.tipo_negocio",
                 "user",
                 "segmentacion_zona:id,zona"

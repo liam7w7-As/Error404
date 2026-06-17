@@ -80,14 +80,46 @@ class CompraController extends Controller
      * @param CompraStoreRequest $request
      * @return RedirectResponse|Response
      */
-    public function store(CompraStoreRequest $request): RedirectResponse|Response
+    public function store(CompraStoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
         try {
-            // crear el Compra
-            $this->compraService->crear($request->validated());
+            $productos = $request->productos;
+            foreach ($productos as $producto) {
+                // crear el Compra (se ejecutará N veces, 1 por producto en el carrito)
+                $this->compraService->crear($producto);
+            }
             DB::commit();
-            return redirect()->route("compras.index")->with("bien", "Registro realizado");
+            return response()->json(["message" => "Registro realizado exitosamente", "sw" => true]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function storeBaja(Request $request): JsonResponse
+    {
+        $request->validate([
+            "productos" => "required|array|min:1",
+            "productos.*.producto_id" => "required|integer",
+            "productos.*.cantidad" => "required|numeric|min:1",
+            "productos.*.motivo" => "required|string|max:255",
+        ], [
+            "productos.required" => "Debe agregar al menos un producto",
+            "productos.*.cantidad.min" => "La cantidad debe ser mayor a 0",
+            "productos.*.motivo.required" => "Debe especificar el motivo de la baja",
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $productos = $request->productos;
+            foreach ($productos as $producto) {
+                $this->compraService->registrarBaja($producto);
+            }
+            DB::commit();
+            return response()->json(["message" => "Bajas registradas exitosamente", "sw" => true]);
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([

@@ -205,7 +205,7 @@ onMounted(async () => {
                             <button 
                                 type="button" 
                                 class="btn py-2 fw-bold" 
-                                :class="multiSearch.estado == 'PENDIENTES' ? 'btn-primary' : 'btn-outline-primary bg-white'"
+                                :class="multiSearch.estado == 'PENDIENTES' ? 'btn-primary' : 'btn-outline-primary'"
                                 @click="cambiarEstado('PENDIENTES')"
                             >
                                 <i class="fa fa-clock me-1"></i> Pedidos Pendientes
@@ -213,7 +213,7 @@ onMounted(async () => {
                             <button 
                                 type="button" 
                                 class="btn py-2 fw-bold" 
-                                :class="multiSearch.estado == 'ENTREGADOS' ? 'btn-success' : 'btn-outline-success bg-white'"
+                                :class="multiSearch.estado == 'ENTREGADOS' ? 'btn-success' : 'btn-outline-success'"
                                 @click="cambiarEstado('ENTREGADOS')"
                             >
                                 <i class="fa fa-check-circle me-1"></i> Pedidos Entregados
@@ -252,7 +252,10 @@ onMounted(async () => {
                                             <i class="fa fa-user text-muted me-1"></i> {{ item.cliente?.nombre }}
                                         </h6>
                                         <small class="text-muted d-block lh-1 text-uppercase mb-1" style="font-size: 0.75rem;">
-                                            <i class="fa fa-map-marker-alt"></i> {{ item.segmentacion_zona?.zona || 'Sin Zona' }}
+                                            <i class="fa fa-store text-muted me-1"></i> {{ item.cliente?.tipo_negocio?.nombre || 'SIN TIPO DE NEGOCIO' }}
+                                        </small>
+                                        <small class="text-muted d-block lh-1 text-uppercase mb-1" style="font-size: 0.75rem;">
+                                            <i class="fa fa-map-marker-alt text-muted me-1"></i> {{ item.segmentacion_zona?.zona || 'Sin Zona' }}
                                         </small>
                                         <small class="text-muted d-block mt-1 fw-bold text-uppercase" style="font-size: 0.75rem;" v-if="item.user?.full_name">
                                             Vend: {{ item.user?.full_name }}
@@ -270,17 +273,21 @@ onMounted(async () => {
                                 </div>
                                 <hr class="my-2 text-muted">
                                 <!-- Footer / Actions -->
-                                <div class="mt-2 w-100">
+                                <div class="mt-2 w-100 d-flex gap-2">
                                     <template v-if="item.estado == 'PENDIENTE' || item.estado == 'DESPACHADO'">
-                                        <button class="btn btn-primary btn-sm fw-bold shadow-sm w-100 py-2" @click="abrirAcciones(item)">
+                                        <button class="btn btn-primary btn-sm fw-bold shadow-sm flex-grow-1 py-2" @click="abrirAcciones(item)">
                                             <i class="fa fa-bolt me-1"></i> Accionar
                                         </button>
                                     </template>
                                     <template v-else-if="item.estado == 'ENTREGADO' && (props_page.auth?.user.permisos == '*' || props_page.auth?.user.permisos.includes('pedidos.pdf'))">
-                                        <a class="btn btn-outline-success btn-sm fw-bold w-100 py-2" :href="route('pedidos.pdf', item.id)" target="_blank">
+                                        <a class="btn btn-outline-success btn-sm fw-bold flex-grow-1 py-2" :href="route('pedidos.pdf', item.id)" target="_blank">
                                             <i class="fa fa-print me-1"></i> Imprimir Ticket
                                         </a>
                                     </template>
+
+                                    <a v-if="item.cliente?.fono" :href="`https://wa.me/591${item.cliente.fono}`" target="_blank" class="btn btn-success btn-sm fw-bold shadow-sm py-2 px-3 d-flex align-items-center justify-content-center" title="Contactar por WhatsApp">
+                                        <i class="fab fa-whatsapp fs-5"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

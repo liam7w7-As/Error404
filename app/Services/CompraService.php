@@ -106,6 +106,32 @@ class CompraService
         return $compra;
     }
 
+    public function registrarBaja(array $datos): void
+    {
+        $producto = Producto::findOrFail($datos["producto_id"]);
+
+        if ($producto->stock_actual < $datos["cantidad"]) {
+            throw new Exception("El stock actual de {$producto->nombre} es insuficiente para dar de baja {$datos['cantidad']} unidades.");
+        }
+
+        $motivo = "BAJA DE STOCK: " . strtoupper($datos["motivo"]);
+
+        // registrar movimiento como SALIDA
+        $this->movimiento_inventario_service->registrarMovimiento(
+            "Baja", 
+            "SALIDA", 
+            $producto, 
+            $datos["cantidad"], 
+            0, // El precio para bajas no es relevante para contabilidad de compras directas, o podría ser el precio de costo. Lo dejamos en 0.
+            $motivo, 
+            "Baja", 
+            0
+        );
+
+        // registrar accion en historial
+        $this->historialAccionService->registrarAccion($this->modulo, "BAJA DE STOCK", "REGISTRÓ UNA BAJA DE INVENTARIO: {$producto->nombre} (-{$datos['cantidad']})", $producto);
+    }
+
     /**
      * Actualizar compra
      *

@@ -151,6 +151,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // COMPRAS
     Route::get("compras/paginado", [CompraController::class, 'paginado'])->name("compras.paginado");
     Route::get("compras/listado", [CompraController::class, 'listado'])->name("compras.listado");
+    Route::post("compras/baja", [CompraController::class, 'storeBaja'])->name("compras.baja_store");
     Route::resource("compras", CompraController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );

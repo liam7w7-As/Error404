@@ -23,27 +23,27 @@ class CompraStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "categoria_producto_id" => "required",
-            "producto_id" => "required",
-            "cantidad" => "required|numeric|min:1",
-            "precio_compra" => "required|numeric|decimal:0,2",
-            "total" => "required|numeric|decimal:0,2",
+            "productos" => "required|array|min:1",
+            "productos.*.categoria_producto_id" => "required",
+            "productos.*.producto_id" => "required",
+            "productos.*.cantidad" => "required|numeric|min:1",
+            "productos.*.precio_compra" => "required|numeric|min:0",
+            "productos.*.total" => "required|numeric|min:0",
         ];
     }
 
     public function messages()
     {
         return [
-            "categoria_producto_id.required" => "Debes completar este campo",
-            "producto_id.required" => "Debes completar este campo",
-            "cantidad.required" => "Debes ingresar la cantidad",
-            "cantidad.numeric" => "Debes ingresar un valor númerico",
-            "precio_compra.required" => "Debes ingresar el precio de compra unidad",
-            "precio_compra.numeric" => "Debes ingresar un valor númerico",
-            "precio_compra.decimal" => "Debes ingresar un valor con hasta 2 decimales",
-            "total.required" => "El total no puede estar vacio o en 0",
-            "total.numeric" => "Debes ingresar un valor númerico",
-            "total.decimal" => "Debes ingresar un valor con hasta 2 decimales",
+            "productos.required" => "Debe agregar al menos un producto al carrito",
+            "productos.min" => "El carrito no puede estar vacío",
+            "productos.*.categoria_producto_id.required" => "Falta la categoría de un producto",
+            "productos.*.producto_id.required" => "Falta el ID del producto",
+            "productos.*.cantidad.required" => "Falta ingresar la cantidad en un producto",
+            "productos.*.cantidad.numeric" => "La cantidad debe ser numérica",
+            "productos.*.precio_compra.required" => "Falta el precio de compra en un producto",
+            "productos.*.precio_compra.numeric" => "El precio debe ser numérico",
+            "productos.*.total.required" => "El total del producto no puede estar vacío",
         ];
     }
 }
