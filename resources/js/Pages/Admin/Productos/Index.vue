@@ -256,7 +256,7 @@ onMounted(async () => {
 
                             <template #estado="{ item }">
                                 <div
-                                    class="badge text-sm text-wrap"
+                                    class="badge text-sm text-nowrap"
                                     :class="[
                                         item.estado == 1
                                             ? 'bg-success'
@@ -286,15 +286,13 @@ onMounted(async () => {
                                         placement="left-start"
                                     >
                                         <button
-                                            class="btn btn-primary"
+                                            class="btn btn-info text-white"
                                             @click="
                                                 setPresentacionProducto(item);
                                                 muestra_formulario_presentacion = true;
                                             "
                                         >
-                                            <i
-                                                class="fa fa-list-alt"
-                                            ></i></button
+                                            <i class="fa fa-boxes"></i></button
                                     ></el-tooltip>
                                 </template>
                                 <template
