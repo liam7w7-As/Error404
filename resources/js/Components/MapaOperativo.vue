@@ -101,6 +101,12 @@ onMounted(() => {
         filtros.value.clientes = true;
     }
     cargarDatosMapa();
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isFullscreen.value) {
+            toggleFullscreen();
+        }
+    });
 });
 
 </script>
@@ -116,8 +122,8 @@ onMounted(() => {
             </div>
             
             <!-- Botón Flotante para Salir de Pantalla Completa -->
-            <button v-if="isFullscreen" class="btn btn-danger btn-cerrar-fullscreen shadow-lg" @click="toggleFullscreen">
-                <i class="fa fa-times fa-lg"></i> <span class="d-none d-md-inline ms-1">Cerrar Pantalla Completa</span>
+            <button v-if="isFullscreen" class="btn btn-danger btn-cerrar-fullscreen shadow-lg" @click.stop.prevent="toggleFullscreen" style="pointer-events: auto;">
+                <i class="fa fa-times fa-lg"></i> <span class="d-none d-md-inline ms-1">Cerrar Pantalla Completa (Esc)</span>
             </button>
             
             <div class="card-body p-0 position-relative h-100 d-flex flex-column">
@@ -195,7 +201,7 @@ onMounted(() => {
     position: fixed;
     top: 15px;
     right: 15px;
-    z-index: 9999;
+    z-index: 999999 !important;
     border-radius: 50px;
     padding: 10px 15px;
     font-weight: bold;

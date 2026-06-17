@@ -90,15 +90,21 @@ const enviarFormulario = () => {
             console.log(code ?? "");
             console.log(form.errors);
             if (form.errors) {
-                const error =
-                    "Existen errores en el formulario, por favor verifique";
+                let errorTitle = "Error de validación";
+                let errorHtml = "Existen errores en el formulario, por favor verifique los campos en rojo.";
+
+                if (form.errors.nombre) {
+                    errorTitle = "¡Atención!";
+                    errorHtml = `<span class="text-danger fs-6">${form.errors.nombre}</span><br><br><span class="text-muted text-sm">Por favor, utilice un nombre diferente para continuar.</span>`;
+                }
+
                 Swal.fire({
-                    icon: "info",
-                    title: "Error",
-                    html: `<strong>${error}</strong>`,
+                    icon: "warning",
+                    title: errorTitle,
+                    html: `<strong>${errorHtml}</strong>`,
                     confirmButtonText: `Aceptar`,
                     customClass: {
-                        confirmButton: "btn-error",
+                        confirmButton: "btn-warning text-dark px-4 fw-bold",
                     },
                 });
             } else {

@@ -39,7 +39,7 @@ class ClienteStoreRequest extends FormRequest
     {
         return [
             "nombre.required" => "Debes completar este campo",
-            "nombre.unique" => "Este nombre no esta disponible",
+            "nombre.unique" => "Ya existe un cliente registrado con este nombre en el sistema.",
             "fono.required" => "Debes completar este campo",
             "razon_social.required" => "Debes completar este campo",
             "nit_ci.required" => "Debes completar este campo",
