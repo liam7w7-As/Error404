@@ -201,6 +201,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("despachos/pdf/{despacho}", [DespachoController::class, 'pdf'])->name("despachos.pdf");
     Route::get("despachos/pdf_seleccionados", [DespachoController::class, 'pdf_seleccionados'])->name("despachos.pdf_seleccionados");
     Route::get("despachos/pdf_seleccionados_cliente", [DespachoController::class, 'pdf_seleccionados_cliente'])->name("despachos.pdf_seleccionados_cliente");
+    Route::post("despachos/mandar_distribuidor", [DespachoController::class, 'mandar_distribuidor'])->name("despachos.mandar_distribuidor");
     Route::resource("despachos", DespachoController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );

@@ -144,7 +144,7 @@ class PedidoService
         if ($estado == 'ENTREGADOS') {
             $pedidos->where("estado", "ENTREGADO");
         } else {
-            $pedidos->whereIn("estado", ["DESPACHADO", "PENDIENTE"]);
+            $pedidos->where("estado", "DESPACHADO"); // Solo ven DESPACHADOS, ya no los PENDIENTES (alistados)
         }
 
         if (Auth::user()->tipo == 'DISTRIBUIDOR') {

@@ -281,4 +281,35 @@ class DespachoController extends Controller
         $pdf = PDF::loadView('reportes.despacho_cliente', compact('clientes', 'fecha_ini', 'fecha_fin'))->setPaper('legal', 'landscape');
         return $pdf->stream('despacho_seleccionados_cliente.pdf');
     }
+
+    public function mandar_distribuidor(Request $request): JsonResponse
+    {
+        $request->validate([
+            'pedido_ids' => 'required|array',
+            'pedido_ids.*' => 'exists:pedidos,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->pedido_ids as $pedido_id) {
+                $pedido = \App\Models\Pedido::find($pedido_id);
+                // Solo si está PENDIENTE lo cambiamos a DESPACHADO
+                if ($pedido->estado == 'PENDIENTE') {
+                    $pedido->estado = 'DESPACHADO';
+                    $pedido->save();
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'sw' => true,
+                'message' => 'Los pedidos seleccionados han sido enviados al distribuidor correctamente.'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'sw' => false,
+                'message' => 'Ocurrió un error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

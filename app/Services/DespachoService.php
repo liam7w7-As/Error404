@@ -156,7 +156,7 @@ class DespachoService
         foreach ($datos["pedido_ids"] as $pedido_id) {
             $pedido = Pedido::findOrFail($pedido_id);
             $pedido->despacho_id = $despacho->id;
-            $pedido->estado = 'DESPACHADO';
+            // $pedido->estado = 'DESPACHADO'; // Se mantiene PENDIENTE hasta mandarlo
             $pedido->save();
 
             // recalcular y registrar despacho

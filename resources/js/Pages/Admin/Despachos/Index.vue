@@ -139,6 +139,48 @@ const eliminarDespacho = (item) => {
 const listClientes = ref([]);
 const listProductos = ref([]);
 
+const enviarDistribuidorLoading = ref(false);
+
+const mandarDistribuidor = () => {
+    if (selected_ids.value.length === 0) {
+        Swal.fire({ title: "Advertencia", text: "Debe seleccionar al menos un pedido para enviarlo al distribuidor.", icon: "warning" });
+        return;
+    }
+    
+    Swal.fire({
+        title: "¿Mandar al distribuidor?",
+        html: `Se enviarán <strong>${selected_ids.value.length}</strong> pedidos seleccionados.<br><br><small>Al hacer esto, los pedidos cambiarán a estado <b>DESPACHADO</b> y ya no podrán ser editados. Además, aparecerán en la aplicación del distribuidor.</small>`,
+        showCancelButton: true,
+        confirmButtonText: "Sí, mandar",
+        cancelButtonText: "Cancelar",
+        icon: "question"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            enviarDistribuidorLoading.value = true;
+            try {
+                let response = await axios.post(route("despachos.mandar_distribuidor"), {
+                    pedido_ids: selected_ids.value
+                });
+                if (response.data.sw) {
+                    Swal.fire({
+                        title: "Correcto",
+                        text: response.data.message,
+                        icon: "success",
+                        confirmButtonText: "Aceptar"
+                    });
+                    updateDatatable();
+                } else {
+                    Swal.fire("Error", response.data.message, "error");
+                }
+            } catch (error) {
+                Swal.fire("Error", "Ocurrió un error al procesar la solicitud.", "error");
+            } finally {
+                enviarDistribuidorLoading.value = false;
+            }
+        }
+    });
+};
+
 const cargarClientes = () => {
     axios.get(route("clientes.listado")).then((respuesta) => {
         listClientes.value = respuesta.data.clientes;
@@ -269,7 +311,10 @@ onMounted(async () => {
                 </div>
                 
                 <div class="row mb-2">
-                    <div class="col-12 d-flex gap-2 align-items-center">
+                    <div class="col-12 d-flex gap-2 align-items-center flex-wrap">
+                        <button type="button" class="btn btn-success btn-sm fw-bold shadow-sm" @click="mandarDistribuidor" :disabled="enviarDistribuidorLoading">
+                            <i class="fa" :class="enviarDistribuidorLoading ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i> Mandar a Distribuidor
+                        </button>
                         <button type="button" class="btn btn-secondary btn-sm" @click="imprimirNotas"><i class="fa fa-print"></i> Imprimir Notas de Venta</button>
                         <button type="button" class="btn btn-secondary btn-sm" @click="imprimirReporte"><i class="fa fa-file-pdf"></i> Imprimir Reporte Despacho por Producto</button>
                         <button type="button" class="btn btn-secondary btn-sm" @click="imprimirReporteCliente"><i class="fa fa-file-pdf"></i> Imprimir Reporte Despacho por Cliente</button>
@@ -296,10 +341,13 @@ onMounted(async () => {
                     <div class="col-12 col-md-6 col-lg-4 mb-3" v-for="item in listDespachos" :key="item.id">
                         <div class="card h-100 shadow-sm custom-card-pedido border-0">
                             <!-- Header -->
-                            <div class="card-header text-white p-2 d-flex justify-content-between align-items-center rounded-top" style="background-color: #2c3e50;">
+                            <div class="card-header text-white p-2 d-flex justify-content-between align-items-center rounded-top" :style="item.estado == 'DESPACHADO' ? 'background-color: #27ae60;' : 'background-color: #2c3e50;'">
                                 <h6 class="mb-0 fw-bold m-0" style="font-size: 0.95rem;">Pedido # {{ item.id }}</h6>
                                 <div class="d-flex align-items-center gap-2">
-                                    <input type="checkbox" class="form-check-input m-0 custom-checkbox" :value="item.id" v-model="selected_ids" title="Seleccionar">
+                                    <span class="badge" :class="item.estado == 'DESPACHADO' ? 'bg-white text-success' : 'bg-warning text-dark'">
+                                        {{ item.estado == 'PENDIENTE' ? 'ALISTADO' : item.estado }}
+                                    </span>
+                                    <input v-if="item.estado == 'PENDIENTE'" type="checkbox" class="form-check-input m-0 custom-checkbox" :value="item.id" v-model="selected_ids" title="Seleccionar">
                                     
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-link text-white p-0 m-0 text-decoration-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="line-height: 1;">
