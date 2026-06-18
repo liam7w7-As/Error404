@@ -55,7 +55,7 @@ const cargarProductosData = () => {
             listProductosData.value = response.data.productos.map(p => ({
                 ...p,
                 ingreso_cantidad: 1,
-                ingreso_precio: 0,
+                ingreso_precio: p.precio_compra || 0,
                 motivo_baja: ""
             }));
         })
@@ -155,7 +155,7 @@ const agregarAlCarrito = (producto) => {
     
     // Limpiar inputs
     producto.ingreso_cantidad = 1;
-    producto.ingreso_precio = 0;
+    producto.ingreso_precio = producto.precio_compra || 0;
     producto.motivo_baja = "";
 };
 
