@@ -88,7 +88,7 @@ class DespachoService
     //     return $despachos;
     // }
 
-    public function listadoPaginado(int $length, int $page, string $search, $producto_id, $cliente_id, $fecha_ini = "", $fecha_fin = "", array $orderBy = []): LengthAwarePaginator
+    public function listadoPaginado(int $length, int $page, string $search, $producto_id, $cliente_id, $distribuidor_id = "", $fecha_ini = "", $fecha_fin = "", array $orderBy = []): LengthAwarePaginator
     {
         $pedidos = Pedido::select("pedidos.*")
             ->with(["cliente.tipo_negocio", "segmentacion_zona:id,zona", "user"])
@@ -109,6 +109,12 @@ class DespachoService
 
         if (!empty($cliente_id)) {
             $pedidos->where("cliente_id", $cliente_id);
+        }
+
+        if (!empty($distribuidor_id)) {
+            $pedidos->whereHas("despacho", function ($q) use ($distribuidor_id) {
+                $q->where("distribuidor_id", $distribuidor_id);
+            });
         }
 
         if (!empty($fecha_ini) && !empty($fecha_fin)) {

@@ -837,14 +837,13 @@ class PedidoService
         $distribuidor_id = $data["distribuidor_id"];
         $ids = $data["ids"];
 
-        // Log::debug($distribuidor_id);
-        // Log::debug($ids);
         foreach ($ids as $id) {
             $pedido = Pedido::find($id);
 
             $pedido->user_distribucion_id = $distribuidor_id;
             $pedido->fecha_salida = date("Y-m-d");
             $pedido->hora_salida = date("H:i:s");
+            $pedido->estado = 'DESPACHADO'; // <-- Bloquea el pedido y lo manda al distribuidor
 
             $pedido->save();
         }
@@ -870,6 +869,11 @@ class PedidoService
             }
             if (!empty($params['cliente_id'])) {
                 $pedidosQuery->where("cliente_id", $params['cliente_id']);
+            }
+            if (!empty($params['distribuidor_id'])) {
+                $pedidosQuery->whereHas("despacho", function ($q) use ($params) {
+                    $q->where("distribuidor_id", $params['distribuidor_id']);
+                });
             }
             if (!empty($params['fecha_ini']) && !empty($params['fecha_fin'])) {
                 $pedidosQuery->whereBetween("fecha", [$params['fecha_ini'], $params['fecha_fin']]);

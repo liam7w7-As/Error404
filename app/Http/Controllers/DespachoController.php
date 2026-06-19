@@ -213,6 +213,7 @@ class DespachoController extends Controller
         $search = (string)$request->input("search", "");
         $producto_id = (string)$request->input("producto_id", "");
         $cliente_id = (string)$request->input("cliente_id", "");
+        $distribuidor_id = (string)$request->input("distribuidor_id", "");
         $fecha_ini = (string)$request->input("fecha_ini", "");
         $fecha_fin = (string)$request->input("fecha_fin", "");
         $orderBy = $request->orderBy;
@@ -225,7 +226,7 @@ class DespachoController extends Controller
             ];
         }
 
-        $clientes = $this->despachoService->listadoPaginado($perPage, $page, $search, $producto_id, $cliente_id, $fecha_ini, $fecha_fin, $arrayOrderBy);
+        $clientes = $this->despachoService->listadoPaginado($perPage, $page, $search, $producto_id, $cliente_id, $distribuidor_id, $fecha_ini, $fecha_fin, $arrayOrderBy);
         return response()->JSON([
             "data" => $clientes->items(),
             "total" => $clientes->total(),
@@ -280,36 +281,5 @@ class DespachoController extends Controller
         $fecha_fin = $request->fecha_fin ?? date('Y-m-d');
         $pdf = PDF::loadView('reportes.despacho_cliente', compact('clientes', 'fecha_ini', 'fecha_fin'))->setPaper('legal', 'landscape');
         return $pdf->stream('despacho_seleccionados_cliente.pdf');
-    }
-
-    public function mandar_distribuidor(Request $request): JsonResponse
-    {
-        $request->validate([
-            'pedido_ids' => 'required|array',
-            'pedido_ids.*' => 'exists:pedidos,id'
-        ]);
-
-        DB::beginTransaction();
-        try {
-            foreach ($request->pedido_ids as $pedido_id) {
-                $pedido = \App\Models\Pedido::find($pedido_id);
-                // Solo si está PENDIENTE lo cambiamos a DESPACHADO
-                if ($pedido->estado == 'PENDIENTE') {
-                    $pedido->estado = 'DESPACHADO';
-                    $pedido->save();
-                }
-            }
-            DB::commit();
-            return response()->json([
-                'sw' => true,
-                'message' => 'Los pedidos seleccionados han sido enviados al distribuidor correctamente.'
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'sw' => false,
-                'message' => 'Ocurrió un error: ' . $e->getMessage()
-            ], 500);
-        }
     }
 }
