@@ -80,6 +80,12 @@ onMounted(async () => {
                                 <h4 class="card-title">Editar Pedido</h4>
                             </div>
                             <div class="card-body">
+                                <div v-if="form.estado !== 'PENDIENTE'" class="alert alert-warning d-flex align-items-center mb-4">
+                                    <i class="fa fa-exclamation-triangle me-2 fs-5"></i>
+                                    <div>
+                                        <strong>Aviso:</strong> Este pedido ya se encuentra en estado <b>{{ form.estado }}</b>. Por motivos de seguridad y consistencia en los despachos, sus productos ya no pueden ser modificados.
+                                    </div>
+                                </div>
                                 <Formulario :form="form"></Formulario>
                             </div>
                         </div>

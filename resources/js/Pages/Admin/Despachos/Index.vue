@@ -81,6 +81,15 @@ const toggleSelectAll = () => {
     }
 };
 
+const toggleSeleccion = (id) => {
+    const index = selected_ids.value.indexOf(id);
+    if (index === -1) {
+        selected_ids.value.push(id);
+    } else {
+        selected_ids.value.splice(index, 1);
+    }
+};
+
 const imprimirNotas = () => {
     if (selected_ids.value.length === 0) {
         Swal.fire({ title: "Advertencia", text: "Debe seleccionar al menos un pedido", icon: "warning" });
@@ -327,14 +336,17 @@ onMounted(async () => {
                 </div>
                 <div class="row custom-cards-container mt-2" v-else>
                     <div class="col-12 col-md-6 col-lg-4 mb-3" v-for="item in listDespachos" :key="item.id">
-                        <div class="card h-100 shadow-sm custom-card-pedido border-0">
+                        <div class="card h-100 shadow-sm custom-card-pedido" 
+                             @click="toggleSeleccion(item.id)" 
+                             style="cursor: pointer; transition: all 0.2s ease-in-out;" 
+                             :class="selected_ids.includes(item.id) ? 'border border-2 border-primary bg-light' : 'border-0'">
                             <!-- Header -->
-                            <div class="card-header text-white p-2 d-flex justify-content-between align-items-center rounded-top" style="background-color: #2c3e50;">
+                            <div class="card-header text-white p-2 d-flex justify-content-between align-items-center rounded-top" :style="selected_ids.includes(item.id) ? 'background-color: #3498db;' : 'background-color: #2c3e50;'">
                                 <h6 class="mb-0 fw-bold m-0" style="font-size: 0.95rem;">Pedido # {{ item.id }}</h6>
                                 <div class="d-flex align-items-center gap-2">
-                                    <input type="checkbox" class="form-check-input m-0 custom-checkbox" :value="item.id" v-model="selected_ids" title="Seleccionar">
+                                    <input type="checkbox" class="form-check-input m-0 custom-checkbox" :value="item.id" v-model="selected_ids" @click.stop title="Seleccionar" style="cursor: pointer; transform: scale(1.2);">
                                     
-                                    <div class="dropdown">
+                                    <div class="dropdown" @click.stop>
                                         <button class="btn btn-sm btn-link text-white p-0 m-0 text-decoration-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="line-height: 1;">
                                             <i class="fa fa-ellipsis-v px-2" style="font-size: 1.1rem;"></i>
                                         </button>

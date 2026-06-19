@@ -257,8 +257,14 @@ onMounted(async () => {
                                 !cargandoPedidos
                             "
                         >
-                            <tr v-for="item in listPedidos" :key="item.id">
-                                <td class="text-center align-middle">
+                            <tr 
+                                v-for="item in listPedidos" 
+                                :key="item.id"
+                                @click="item.seleccionado = !item.seleccionado; verificarSeleccionTodo()"
+                                style="cursor: pointer;"
+                                :class="{ 'bg-light': item.seleccionado }"
+                            >
+                                <td class="text-center align-middle" @click.stop>
                                     <input type="checkbox" v-model="item.seleccionado" @change="verificarSeleccionTodo" class="form-check-input" style="width: 20px; height: 20px; cursor: pointer;">
                                 </td>
                                 <td class="align-middle fw-bold">#{{ item.id }}</td>

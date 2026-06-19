@@ -193,14 +193,21 @@ onMounted(async () => {
                     </thead>
                     <tbody>
                         <template v-if="listPedidos.length > 0">
-                            <tr v-for="item in listPedidos" :key="item.id">
+                            <tr 
+                                v-for="item in listPedidos" 
+                                :key="item.id" 
+                                @click="item.salida = item.salida ? 0 : 1" 
+                                style="cursor: pointer;"
+                                :class="{ 'bg-light': item.salida }"
+                            >
                                 <td>{{ item.id }}</td>
                                 <td>{{ item.cliente.nombre }}</td>
                                 <td>{{ item.segmentacion_zona.zona }}</td>
                                 <td>{{ $formatMoney(item.total) }} Bs.</td>
-                                <td>
+                                <td @click.stop>
                                     <input
-                                        class="checkboxTable"
+                                        class="checkboxTable form-check-input"
+                                        style="cursor: pointer;"
                                         type="checkbox"
                                         :true-value="1"
                                         :false-value="0"
